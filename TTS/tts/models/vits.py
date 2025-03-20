@@ -1830,7 +1830,7 @@ class Vits(BaseTTS):
             self.length_scale = length_scale
             self.noise_scale_dp = noise_scale_dp
 
-            return self.inference(
+            outputs = self.inference(
                 text,
                 aux_input={
                     "x_lengths": text_lengths,
@@ -1839,7 +1839,12 @@ class Vits(BaseTTS):
                     "language_ids": None,
                     "durations": None,
                 },
-            )["model_outputs"]
+            )
+            print("\n\n\n")
+            print("8"*100)
+            # model_outputs = outputs["model_outputs"]
+            # durations = outputs["durations"]
+            return outputs
 
         self.forward = onnx_inference
 
@@ -1875,7 +1880,16 @@ class Vits(BaseTTS):
             f=output_path,
             verbose=verbose,
             input_names=input_names,
-            output_names=["output"],
+            output_names=[
+                "model_outputs",
+                "alignments",
+                "durations",
+                "z",
+                "z_p",
+                "m_p",
+                "logs_p",
+                "y_mask"
+            ],
             dynamic_axes={
                 "input": {0: "batch_size", 1: "phonemes"},
                 "input_lengths": {0: "batch_size"},
